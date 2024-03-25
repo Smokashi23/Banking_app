@@ -1,10 +1,10 @@
 import React from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { Provider } from "react-redux";
-import { ToastContainer, toast } from 'react-toastify'; // Import ToastContainer and toast
-import 'react-toastify/dist/ReactToastify.css'; // Import CSS for toastify
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import store from "./redux/store";
-import Navbar from "./Components/Navbar";
+import Navbar from "./Components/Navbar"; // Import your Navbar component
 import Home from "./Pages/Home";
 import SignUp from "./Components/Signup";
 import Login from "./Components/Login";
@@ -16,11 +16,14 @@ import CreateAccount from "./Components/CreateAccount";
 import storage from "./utils/storage";
 
 const App = () => {
+  const isAuthenticated = false; // Set your isAuthenticated status here
+
   return (
     <Provider store={store}>
       <Router>
         <div>
-          <ToastContainer /> 
+          <Navbar  /> {/* Pass isAuthenticated prop to Navbar */}
+          <ToastContainer />
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/signup" element={<SignUp />} />

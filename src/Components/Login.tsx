@@ -42,6 +42,13 @@ const Login = () => {
           dispatch(loginUserSuccess(values));
           storage.setToken(response.data.token);
           toast.success("Login successful");
+
+          // Update isAuthenticated status in Redux store
+          dispatch(loginUserSuccess(values));
+
+          // Update isAuthenticated status in local storage
+          localStorage.setItem("isAuthenticated", "true");
+
           navigate("/account"); // Navigate to account operation page
         } else {
           dispatch(loginUserFailure("Login failed"));
@@ -59,7 +66,6 @@ const Login = () => {
     <div className="container">
       <h2>Login</h2>
       {isLoading && <p>Loading...</p>}
-      {/* {error && <p className="text-danger">{error}</p>} */}
       <form onSubmit={formik.handleSubmit}>
         <div className="form-group">
           <label htmlFor="username">username</label>

@@ -1,16 +1,16 @@
-import { createSlice, isAnyOf, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { User, LoginData } from '../interfaces';
 
-
-
-interface UserState {
-  user: User | null;
-  isLoading: boolean;
-  error: string | null;
-}
+  interface UserState {
+    user: User | null;
+    isAuthenticated: boolean; 
+    isLoading: boolean;
+    error: string | null;
+  }
 
 const initialState: UserState = {
   user: null,
+  isAuthenticated: false, 
   isLoading: false,
   error: null,
 };
@@ -26,6 +26,7 @@ const userSlice = createSlice({
     signUpUserSuccess: (state: UserState, action: PayloadAction<User>) => {
       state.isLoading = false;
       state.user = action.payload;
+      state.isAuthenticated = true; // Set isAuthenticated to true after successful signup
     },
     signUpUserFailure: (state: UserState, action: PayloadAction<string>) => {
       state.isLoading = false;
@@ -45,6 +46,7 @@ const userSlice = createSlice({
         address: '',
         role: 'Customer',
       };
+      state.isAuthenticated = true; // Set isAuthenticated to true after successful login
     },
     loginUserFailure: (state: UserState, action: PayloadAction<string>) => {
       state.isLoading = false;
@@ -55,6 +57,7 @@ const userSlice = createSlice({
     },
     logoutUser: (state: UserState) => {
       state.user = null;
+      state.isAuthenticated = false; // Set isAuthenticated to false after logout
     },
   },
 });
