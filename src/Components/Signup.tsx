@@ -2,11 +2,14 @@ import React from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const validationSchema = Yup.object({
   name: Yup.string().required('Name is required'),
-  mobile: Yup.string().required('Mobile number is required'),
-  email: Yup.string().email('Invalid email address').required('Email is required'),
+  mobile: Yup.string().matches(/^[0-9]{10}$/, 'Mobile number must be exactly 10 digits').required('Mobile number is required'),
+  email: Yup.string().email('Invalid email address').required('Email is required').test('is-lowercase', 'Email must be in lowercase', value => /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/.test(value)),
   password: Yup.string()
     .matches(
       /^(?=.*\d)(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z]).{8,}$/,
@@ -17,9 +20,10 @@ const validationSchema = Yup.object({
 });
 
 const SignUp = () => {
+  const navigate = useNavigate();
+
   const formik = useFormik({
     initialValues: {
-
       name: '',
       mobile: '',
       email: '',
@@ -28,19 +32,20 @@ const SignUp = () => {
       role: 'Customer',
     },
     validationSchema,
-    onSubmit: (values) => {
-      axios
-        .post('http://localhost:1925/signup', values)
-        .then((response) => {
-          console.log(response.data);
-          alert('Sign up successful!');
-        })
-        .catch((error) => {
-          console.error(error);
-          alert('Sign up failed. Please try again.');
-        });
+    onSubmit: async (values) => {
+      try {
+        const response = await axios.post('http://localhost:1925/signup', values);
+        console.log(response.data);
+        toast.success('Sign up successful!', { position: 'top-center' });
+        navigate('/login');
+      } catch (error) {
+        console.error(error);
+        toast.error('Sign up failed. Please try again.', { position: 'top-center' });
+      }
     },
   });
+
+
 
   return (
     <div className="container">

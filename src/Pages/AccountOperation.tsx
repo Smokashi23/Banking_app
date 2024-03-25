@@ -1,26 +1,55 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { Card } from 'antd';
+import 'antd/dist/reset.css';
+import creatAccountImage from '../images/createaccount.jpg';
+import WithdrawAmountImage from '../images/withdraw.png';
+import depositImage from '../images/deposite.jpg';
+import checkbalanceImage from  '../images/check balance.jpg';
+
+interface CardContainerProps {
+  to: string;
+  image: string; // Explicitly defining the type of 'image' prop as string
+  title: string;
+}
 
 const AccountOperations = () => {
   return (
-    <div>
+    <div style={{ padding: '20px', backgroundColor: '#efdecd', minHeight: '100vh' }}>
       <h2>Account Operations</h2>
-      <ul>
-        <li>
-          <Link to="/create-account">Create Account</Link>
-        </li>
-        <li>
-          <Link to="/withdraw">Withdraw</Link>
-        </li>
-        <li>
-          <Link to="/deposit">Deposit</Link>
-        </li>
-        <li>
-          <Link to="/delete-account">Delete Account</Link>
-        </li>
-      </ul>
+      <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+        <CardContainer to="/create-account" image={creatAccountImage} title="Create Account" />
+        <CardContainer to="/withdraw" image={WithdrawAmountImage} title="Withdraw" />
+        <CardContainer to="/deposit" image={depositImage} title="Deposit" />
+        <CardContainer to="/delete-account" image={checkbalanceImage} title="Delete Account" />
+      </div>
     </div>
+  );
+};
+
+const CardContainer: React.FC<CardContainerProps> = ({ to, image, title }) => {
+  return (
+    <Link to={to} style={{ textDecoration: 'none' }}>
+      <Card
+        style={{
+          width: 300,
+          marginBottom: 20,
+          transition: 'box-shadow 0.3s',
+        }}
+        hoverable
+        cover={<img alt={title} src={image} style={{ width: '100%' }} />}
+        onMouseOver={(e) => {
+          e.currentTarget.style.boxShadow = '0px 10px 20px rgba(0, 0, 0, 0.2)'; // Add lifting effect on hover
+          e.currentTarget.style.border = '1px solid #1890ff'; // Add border on hover
+        }}
+        onMouseOut={(e) => {
+          e.currentTarget.style.boxShadow = 'none'; // Remove lifting effect on mouse out
+          e.currentTarget.style.border = '1px solid transparent'; // Revert border on mouse out
+        }}
+      >
+        <h3>{title}</h3>
+      </Card>
+    </Link>
   );
 };
 

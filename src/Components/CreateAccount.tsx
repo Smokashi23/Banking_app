@@ -1,41 +1,36 @@
-import React, { useState } from "react";
+import React, { useReducer, useState } from "react";
+import { Form, Input, Button, Select, Card, Divider, message } from "antd";
 import axios from "axios";
 import { useAppDispatch, useAppSelector } from "../hooks";
 import { createAccount } from "../redux/accountSlice";
-import { Account } from "../interfaces";
 import { RootState } from "../redux/store";
-import { log } from "console";
 import storage from "../utils/storage";
+
+const { Option } = Select;
+
+const initialState = {
+  branch_id: 1001,
+  acc_type: "savings", // Default account type
+  balance: 0,
+};
+
+const reducer = (state: any, action: any) => {
+  return { ...state, ...action };
+};
 
 const CreateAccount = () => {
   const dispatch = useAppDispatch();
-  const { isLoading, error } = useAppSelector(
-    (state: RootState) => state.account
-  );
+  const { error } = useAppSelector((state: RootState) => state.account);
 
-  const [formData, setFormData] = useState<Account>({
-    branch_id: 1001,
-    acc_type: "",
-    balance: 0,
-  });
+  const [formData, dispatchFormData] = useReducer(reducer, initialState);
+  const [createdResponse, setCreatedResponse] = useState<any>(null);
+  const [successVisible, setSuccessVisible] = useState(false);
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
-    console.log(e.target.value, typeof e.target.value);
-    let { name, value } = e.target;
-    let updatedFormData;
-    if (name === "branch_id" || name === "balance") {
-      updatedFormData = +value;
-    }
-    setFormData({
-      ...formData,
-      [e.target.name]: updatedFormData ? updatedFormData : value,
-    });
+  const handleChange = (name: string, value: string | number) => {
+    dispatchFormData({ [name]: value });
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async () => {
     try {
       const response = await axios.post(
         "http://localhost:1925/account/create",
@@ -49,12 +44,20 @@ const CreateAccount = () => {
       );
       dispatch(createAccount());
       console.log("Account created successfully:", response.data);
-      setFormData({
-        branch_id: 1001,
-        acc_type: "",
-        balance: 0,
-      });
+      setCreatedResponse(response.data);
+      dispatchFormData(initialState);
+      setSuccessVisible(true);
+      message.success("Account created successfully.");
     } catch (error) {
+      if (axios.isAxiosError(error)) {
+        if (error.response && error.response.data.error_description) {
+          message.error(error.response.data.error_description);
+        } else {
+          message.error("Error creating account.");
+        }
+      } else {
+        message.error("Error creating account.");
+      }
       console.error("Error creating account:", error);
     }
   };
@@ -62,33 +65,78 @@ const CreateAccount = () => {
   return (
     <div>
       <h2>Create Account</h2>
-      {isLoading && <p>Loading...</p>}
       {error && <p>{error}</p>}
-      <form onSubmit={handleSubmit}>
-        <select
-          name="branch_id"
-          value={formData.branch_id}
-          onChange={handleChange}
-        >
-          <option value={1001}>1001</option>
-          <option value={1002}>1002</option>
-        </select>
-        <input
-          type="text"
-          name="acc_type"
-          placeholder="Account Type"
-          value={formData.acc_type}
-          onChange={handleChange}
-        />
-        <input
-          type="number"
+      <Form onFinish={handleSubmit}>
+        <Form.Item label="Branch ID">
+          <Select
+            value={formData.branch_id}
+            onChange={(value) => handleChange("branch_id", value)}
+          >
+            <Option value={1001}>1001</Option>
+            <Option value={1002}>1002</Option>
+          </Select>
+        </Form.Item>
+        <Form.Item label="Account Type" name="acc_type">
+          <Select
+            value={formData.acc_type}
+            onChange={(value) => handleChange("acc_type", value)}
+          >
+            <Option value="savings">Savings</Option>
+            <Option value="current">Current</Option>
+            <Option value="loan">Loan</Option>
+            <Option value="salary">Salary</Option>
+          </Select>
+        </Form.Item>
+        <Form.Item
+          label="Initial Balance"
           name="balance"
-          placeholder="Initial Balance"
-          value={formData.balance}
-          onChange={handleChange}
-        />
-        <button type="submit">Create Account</button>
-      </form>
+          rules={[
+            { required: true, message: "Please enter initial balance" },
+            {
+              type: "number",
+              min: 0, // Ensures the value is greater than or equal to 0
+              transform: (value) => parseFloat(value), // Convert the value to a float
+              message: "Initial balance must be a non-negative number",
+            },
+          ]}
+        >
+          <Input
+            type="number"
+            value={formData.balance}
+            onChange={(e) =>
+              handleChange("balance", parseFloat(e.target.value))
+            }
+          />
+        </Form.Item>
+
+        <Form.Item>
+          <Button type="primary" htmlType="submit">
+            Create Account
+          </Button>
+        </Form.Item>
+      </Form>
+      {successVisible && createdResponse && (
+        <div
+          style={{
+            marginTop: "20px",
+            padding: "20px",
+            border: "1px solid #ccc",
+            borderRadius: "5px",
+          }}
+        >
+          <h3 style={{ textAlign: "center" }}>Account Created Successfully</h3>
+          <Divider />
+          <p>
+            <strong>Account No:</strong> {createdResponse.acc_no}
+          </p>
+          <p>
+            <strong>Branch ID:</strong> {createdResponse.branch_id}
+          </p>
+          <p>
+            <strong>Balance:</strong> {createdResponse.balance}
+          </p>
+        </div>
+      )}
     </div>
   );
 };
