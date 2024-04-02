@@ -6,6 +6,7 @@ export interface User {
   password: string;
   address: string;
   role: string;
+  user_id: string;
 }
 
 export interface Account {
@@ -19,3 +20,8 @@ export interface LoginData {
   password: string;
 }
 
+export interface UserListState {
+  users: User[];
+  loading: boolean;
+  error: string | null;
+}

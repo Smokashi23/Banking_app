@@ -1,3 +1,4 @@
+
 const storagePrefix = 'banking_system';
 
 const storage = {

@@ -3,6 +3,7 @@ import { Modal } from "antd";
 import { useAppDispatch } from "../hooks";
 import { logoutUser } from "../redux/userSlice";
 import { useNavigate } from "react-router-dom";
+import storage from "../utils/storage";
 
 const Logout = () => {
   const dispatch = useAppDispatch();
@@ -10,19 +11,22 @@ const Logout = () => {
   const [isOpen, setIsOpen] = useState(true);
 
   const handleLogout = () => {
-    // Remove token from local storage
-    localStorage.removeItem("token");
-    // Dispatch logoutUser action
+    
+    // localStorage.removeItem("token");
+    storage.clearToken()
+  
     dispatch(logoutUser());
-    // Redirect to home page
+  
     navigate("/");
-    // Hide the modal
-    setIsOpen(false);
+
+    setIsOpen(true);
+    // setLogoutVisible(false)
   };
 
   const handleCancel = () => {
    
-    // Hide the modal
+
+    // setLogoutVisible(false)
     setIsOpen(false);
   };
 

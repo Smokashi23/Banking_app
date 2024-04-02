@@ -10,7 +10,7 @@ const { Option } = Select;
 
 const initialState = {
   branch_id: 1001,
-  acc_type: "savings", // Default account type
+  acc_type: "savings",
   balance: 0,
 };
 
@@ -94,8 +94,8 @@ const CreateAccount = () => {
             { required: true, message: "Please enter initial balance" },
             {
               type: "number",
-              min: 0, // Ensures the value is greater than or equal to 0
-              transform: (value) => parseFloat(value), // Convert the value to a float
+              min: 0, 
+              transform: (value) => parseFloat(value), 
               message: "Initial balance must be a non-negative number",
             },
           ]}

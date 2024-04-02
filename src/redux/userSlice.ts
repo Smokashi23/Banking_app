@@ -6,6 +6,7 @@ import { User, LoginData } from '../interfaces';
     isAuthenticated: boolean; 
     isLoading: boolean;
     error: string | null;
+    user_id: string| null;
   }
 
 const initialState: UserState = {
@@ -13,6 +14,7 @@ const initialState: UserState = {
   isAuthenticated: false, 
   isLoading: false,
   error: null,
+  user_id: null,
 };
 
 const userSlice = createSlice({
@@ -44,7 +46,8 @@ const userSlice = createSlice({
         email: action.payload.username,
         password: '',
         address: '',
-        role: 'Customer',
+        role: 'Admin',
+        user_id:'',
       };
       state.isAuthenticated = true; // Set isAuthenticated to true after successful login
     },
