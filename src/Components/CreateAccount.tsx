@@ -18,7 +18,13 @@ const reducer = (state: any, action: any) => {
   return { ...state, ...action };
 };
 
-const CreateAccount = () => {
+const CreateAccount = ({
+  user,
+  handleCancel,
+}: {
+  user: any;
+  handleCancel: Function;
+}) => {
   const dispatch = useAppDispatch();
   const { error } = useAppSelector((state: RootState) => state.account);
 
@@ -34,7 +40,7 @@ const CreateAccount = () => {
     try {
       const response = await axios.post(
         "http://localhost:1925/account/create",
-        formData,
+        { ...formData, user_id: user.user_id },
         {
           headers: {
             Authorization: storage.getToken(),
@@ -48,6 +54,7 @@ const CreateAccount = () => {
       dispatchFormData(initialState);
       setSuccessVisible(true);
       message.success("Account created successfully.");
+      handleCancel();
     } catch (error) {
       if (axios.isAxiosError(error)) {
         if (error.response && error.response.data.error_description) {
@@ -59,13 +66,17 @@ const CreateAccount = () => {
         message.error("Error creating account.");
       }
       console.error("Error creating account:", error);
+      handleCancel();
     }
   };
 
   return (
     <div>
-      <h2>Create Account</h2>
+      <h5>Create Account for {user.name}</h5>
       {error && <p>{error}</p>}
+      <label>User Id :</label>
+      <span>{user.user_id}</span>
+      {console.log(formData.acc_type)}
       <Form onFinish={handleSubmit}>
         <Form.Item label="Branch ID">
           <Select
@@ -76,9 +87,10 @@ const CreateAccount = () => {
             <Option value={1002}>1002</Option>
           </Select>
         </Form.Item>
+
         <Form.Item label="Account Type" name="acc_type">
           <Select
-            value={formData.acc_type}
+            defaultValue={formData.acc_type} // Add defaultValue prop
             onChange={(value) => handleChange("acc_type", value)}
           >
             <Option value="savings">Savings</Option>
@@ -94,8 +106,8 @@ const CreateAccount = () => {
             { required: true, message: "Please enter initial balance" },
             {
               type: "number",
-              min: 0, 
-              transform: (value) => parseFloat(value), 
+              min: 0,
+              transform: (value) => parseFloat(value),
               message: "Initial balance must be a non-negative number",
             },
           ]}
@@ -126,6 +138,7 @@ const CreateAccount = () => {
         >
           <h3 style={{ textAlign: "center" }}>Account Created Successfully</h3>
           <Divider />
+
           <p>
             <strong>Account No:</strong> {createdResponse.acc_no}
           </p>

@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import storage from "../utils/storage"; // Assuming storage contains getToken() function
+import storage from "../utils/storage"; 
 
 const baseQuery = fetchBaseQuery({
   baseUrl: "http://localhost:1925/admin/",

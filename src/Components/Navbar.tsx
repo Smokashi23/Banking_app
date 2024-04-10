@@ -94,6 +94,11 @@ const Navbar = () => {
                     User Profile
                   </Link>
                 </li>
+                {/* <li className="nav-item">
+                  <Link className="nav-link" to="/create-account">
+                    Create Account
+                  </Link>
+                </li> */}
                 <li className="nav-item">
                   <Link className="nav-link" to="/userDashboard">
                     Account Operations

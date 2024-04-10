@@ -60,14 +60,14 @@ const App = () => {
                   </Protected>
                 }
               />
-              <Route
+              {/* <Route
                 path="/create-account"
                 element={
                   <Protected authentication={true}>
                     <CreateAccount />
                   </Protected>
                 }
-              />
+              /> */}
               <Route
                 path="/withdraw"
                 element={

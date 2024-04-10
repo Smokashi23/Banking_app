@@ -28,7 +28,7 @@ const userSlice = createSlice({
     signUpUserSuccess: (state: UserState, action: PayloadAction<User>) => {
       state.isLoading = false;
       state.user = action.payload;
-      state.isAuthenticated = true; // Set isAuthenticated to true after successful signup
+      state.isAuthenticated = true;
     },
     signUpUserFailure: (state: UserState, action: PayloadAction<string>) => {
       state.isLoading = false;
@@ -49,7 +49,7 @@ const userSlice = createSlice({
         role: 'Admin',
         user_id:'',
       };
-      state.isAuthenticated = true; // Set isAuthenticated to true after successful login
+      state.isAuthenticated = true; 
     },
     loginUserFailure: (state: UserState, action: PayloadAction<string>) => {
       state.isLoading = false;
@@ -60,7 +60,7 @@ const userSlice = createSlice({
     },
     logoutUser: (state: UserState) => {
       state.user = null;
-      state.isAuthenticated = false; // Set isAuthenticated to false after logout
+      state.isAuthenticated = false;
     },
   },
 });
